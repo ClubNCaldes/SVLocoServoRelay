@@ -306,7 +306,8 @@ void notifyPower( uint8_t State )
   if (State)
   {
     for (n=0;n<NUM_SERVOS;n++)   
-          LocoNet.send(OPC_INPUT_REP, svtable.svt.pincfg[n+8].value1, svtable.svt.pincfg[n+8].value2);
+          LocoNet.send(OPC_SW_REP, svtable.svt.pincfg[n+8].value1, svtable.svt.pincfg[n+8].value2);          
+          //LocoNet.send(OPC_INPUT_REP, svtable.svt.pincfg[n+8].value1, svtable.svt.pincfg[n+8].value2);          
   }
 }
 
