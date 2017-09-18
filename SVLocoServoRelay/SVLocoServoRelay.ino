@@ -100,12 +100,6 @@ void setup()
   // First initialize the LocoNet interface
   LocoNet.init(7);
 
-  // Configure the serial port for 57600 baud
-  #ifdef DEBUG
-  Serial.begin(57600);
-  Serial.print("SVServoRelay ");Serial.println(VERSION);
-  #endif 
-
   //Load config from EEPROM
   for (n=0;n<SVTABLE_MAX_RECORD;n++)
     svtable.data[n]=EEPROM.read(n);
@@ -113,12 +107,18 @@ void setup()
   //Load right addresses moving the right bits
   for (n=0;n<16;n++)
   {
-    //TODO set right addresses for inputs
+    //set right addresses for inputs
     directions[n]=svtable.svt.pincfg[n].value1;
     bitWrite(directions[n],7,bitRead(svtable.svt.pincfg[n].value2,0));
     bitWrite(directions[n],8,bitRead(svtable.svt.pincfg[n].value2,1));
     bitWrite(directions[n],9,bitRead(svtable.svt.pincfg[n].value2,2));
   }
+
+  // Configure the serial port for 57600 baud
+  #ifdef DEBUG
+  Serial.begin(9600);
+  Serial.print("SVServoRelay ");Serial.print(VERSION);Serial.print(" - ");Serial.print(svtable.svt.addr_low);Serial.print("/");Serial.println(svtable.svt.addr_high);
+  #endif 
   
   //Attacch Servos
   servo[0].attach(2);
@@ -169,6 +169,7 @@ void setup()
       LocoNet.send(OPC_INPUT_REP, svtable.svt.pincfg[n+8].value1, svtable.svt.pincfg[n+8].value2);
     }
   }
+  
 }
 
 void loop()
@@ -306,8 +307,8 @@ void notifyPower( uint8_t State )
   if (State)
   {
     for (n=0;n<NUM_SERVOS;n++)   
-          LocoNet.send(OPC_SW_REP, svtable.svt.pincfg[n+8].value1, svtable.svt.pincfg[n+8].value2);          
-          //LocoNet.send(OPC_INPUT_REP, svtable.svt.pincfg[n+8].value1, svtable.svt.pincfg[n+8].value2);          
+          //LocoNet.send(OPC_SW_REP, svtable.svt.pincfg[n+8].value1, svtable.svt.pincfg[n+8].value2);          
+          LocoNet.send(OPC_INPUT_REP, svtable.svt.pincfg[n+8].value1, svtable.svt.pincfg[n+8].value2);          
   }
 }
 
